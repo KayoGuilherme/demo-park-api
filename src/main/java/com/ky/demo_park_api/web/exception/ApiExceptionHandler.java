@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ky.demo_park_api.exception.EmailUniqueViolationException;
+import com.ky.demo_park_api.exception.EntityNotFoundException;
+import com.ky.demo_park_api.exception.PasswordInvalidException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +19,32 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    @ExceptionHandler(PasswordInvalidException.class)
+    public ResponseEntity<ErrorMessager> handleMethodArgumentPasswordInvalidException(PasswordInvalidException ex,
+            HttpServletRequest request) {
+        log.error("Api Error", ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessager(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMessager> handleMethodArgumentNotUserException(EntityNotFoundException ex,
+            HttpServletRequest request) {
+        log.error("Api Error", ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessager(request, HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
     @ExceptionHandler(EmailUniqueViolationException.class)
-    public ResponseEntity<ErrorMessager> handleEmailUniqueViolationException(EmailUniqueViolationException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorMessager> handleEmailUniqueViolationException(EmailUniqueViolationException ex,
+            HttpServletRequest request) {
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessager(request, HttpStatus.CONFLICT, ex.getMessage()));
     }
-    
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessager> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex,

@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ky.demo_park_api.entity.Usuario;
 import com.ky.demo_park_api.exception.EmailUniqueViolationException;
+import com.ky.demo_park_api.exception.EntityNotFoundException;
+import com.ky.demo_park_api.exception.PasswordInvalidException;
 import com.ky.demo_park_api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,21 +32,21 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Usuario getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("User not found!"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Usuario não encontrado.")));
     }
 
     @Transactional
     public Usuario updatePassword(Long id, String senhaAtual, String confirmaSenha, String novaSenha) {
 
         if (!novaSenha.equals(confirmaSenha)) {
-            throw new RuntimeException("Nova senha nao confere com confirmacao de senha.");
+            throw new PasswordInvalidException(String.format("Nova senha não confere com o confirmar senha"));
         }
 
         Usuario user = getUserById(id);
 
         if (!user.getPassword().equals(senhaAtual)) {
-            throw new RuntimeException("Sua senha nao confere.");
+            throw new PasswordInvalidException(String.format("Sua senha não confere."));
         }
 
         user.setPassword(novaSenha);
