@@ -1,6 +1,9 @@
 package com.ky.demo_park_api.web.dto.mapper;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 
@@ -24,6 +27,12 @@ public class UserMapper {
              mapper -> mapper.map(src -> role, UserResponseDto::setRole)
         );
         return mapperMain.map(user, UserResponseDto.class);
+    }
+
+
+
+    public static List<UserResponseDto> toListDto(List<Usuario> usuarios) {
+        return usuarios.stream().map(user -> toDto(user)).collect(Collectors.toList());
     }
 
 }
