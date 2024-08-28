@@ -10,7 +10,8 @@ import org.springframework.validation.FieldError;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.*;
+import lombok.Getter;
+import lombok.ToString;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
@@ -28,6 +29,10 @@ public class ErrorMessager {
     private String message;
 
     private Map<String, String> errors;
+
+    public ErrorMessager() {
+      
+    }
 
     public ErrorMessager(HttpServletRequest request, HttpStatus status, String message) {
         this.path = request.getRequestURI();

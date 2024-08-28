@@ -17,63 +17,135 @@ import com.ky.demo_park_api.web.exception.ErrorMessager;
 @Sql(scripts = "/sql/usuarios/usuarios-delete.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class UsuarioIT {
 
+        @Autowired
+        WebTestClient testClient;
 
-    @Autowired
-    WebTestClient testClient;
+        @Test
+        public void createUser_EmailAndPasswordAreValid_ReturnUserCreatedStatus201() {
+                UserResponseDto responseBody = testClient
+                                .post()
+                                .uri("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new UserCreateDto("oliver2clara@gmail.com", "12345678"))
+                                .exchange()
+                                .expectStatus().isCreated()
+                                .expectBody(UserResponseDto.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getEmail()).isEqualTo("oliver2clara@gmail.com");
+                assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
+        }
 
-    @Test
-    public void createUser_EmailAndPasswordAreValid_ReturnUserCreatedStatus201() {
-        UserResponseDto responseBody = testClient
-                .post()
-                .uri("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new UserCreateDto("oliver2clara@gmail.com", "12345678"))
-                .exchange()
-                .expectStatus().isCreated()
-                .expectBody(UserResponseDto.class)
-                .returnResult().getResponseBody();
-        assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getEmail()).isEqualTo("oliver2clara@gmail.com");
-        assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
-    }
+        @Test
+        public void createUser_InvalidPassword_ReturnErrorMessage422() {
+                ErrorMessager responseBody = testClient
+                                .post()
+                                .uri("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new UserCreateDto("oliver2clara@gmail.com", ""))
+                                .exchange()
+                                .expectStatus().isEqualTo(422)
+                                .expectBody(ErrorMessager.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getStatus()).isEqualTo(422);
 
-    @Test
-    public void createUser_Emailnvalid_ReturnErrorMessage422() {
-        ErrorMessager responseBody = testClient
-                .post()
-                .uri("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new UserCreateDto("", "12345678"))
-                .exchange()
-                .expectStatus().isEqualTo(422)
-                .expectBody(ErrorMessager.class)
-                .returnResult().getResponseBody();
-        assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getStatus()).isEqualTo(422);
+                responseBody = testClient
+                                .post()
+                                .uri("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new UserCreateDto("oliver2clara@gmail.com", "12345"))
+                                .exchange()
+                                .expectStatus().isEqualTo(422)
+                                .expectBody(ErrorMessager.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getStatus()).isEqualTo(422);
 
-        responseBody = testClient
-                .post()
-                .uri("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new UserCreateDto("kayo@", "12345678"))
-                .exchange()
-                .expectStatus().isEqualTo(422)
-                .expectBody(ErrorMessager.class)
-                .returnResult().getResponseBody();
-        assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getStatus()).isEqualTo(422);
+        }
 
-        responseBody = testClient
-                .post()
-                .uri("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new UserCreateDto("kayo@gmail", "12345678"))
-                .exchange()
-                .expectStatus().isEqualTo(422)
-                .expectBody(ErrorMessager.class)
-                .returnResult().getResponseBody();
-        assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getStatus()).isEqualTo(422);
+        @Test
+        public void createUser_Emailnvalid_ReturnErrorMessage422() {
+                ErrorMessager responseBody = testClient
+                                .post()
+                                .uri("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new UserCreateDto("", "12345678"))
+                                .exchange()
+                                .expectStatus().isEqualTo(422)
+                                .expectBody(ErrorMessager.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getStatus()).isEqualTo(422);
 
-    }
+                responseBody = testClient
+                                .post()
+                                .uri("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new UserCreateDto("kayo@", "12345678"))
+                                .exchange()
+                                .expectStatus().isEqualTo(422)
+                                .expectBody(ErrorMessager.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getStatus()).isEqualTo(422);
+
+                responseBody = testClient
+                                .post()
+                                .uri("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new UserCreateDto("kayo@gmail", "12345678"))
+                                .exchange()
+                                .expectStatus().isEqualTo(422)
+                                .expectBody(ErrorMessager.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        }
+
+        @Test
+        public void createUser_ExistingEmail_ReturnErrorMessager409() {
+
+                ErrorMessager responseBody = testClient
+                                .post()
+                                .uri("/users")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(new UserCreateDto("kayo@gmail.com", "12345678"))
+                                .exchange()
+                                .expectStatus().isEqualTo(409)
+                                .expectBody(ErrorMessager.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getStatus()).isEqualTo(409);
+        }
+
+        
+        @Test
+        public void getUserById_WithExistingId_ReturnUserStatus200() {
+                UserResponseDto responseBody = testClient
+                                .get()
+                                .uri("/users/101")
+                                .exchange()
+                                .expectStatus().isOk()
+                                .expectBody(UserResponseDto.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getId()).isEqualTo(101);
+                assertThat(responseBody.getEmail()).isEqualTo("kayo@gmail.com");
+        }
+
+
+        @Test
+        public void getUserById_WithInexistingId_ReturnUserStatus404() {
+                ErrorMessager responseBody = testClient
+                                .get()
+                                .uri("/users/8")
+                                .exchange()
+                                .expectStatus().isNotFound()
+                                .expectBody(ErrorMessager.class)
+                                .returnResult().getResponseBody();
+                assertThat(responseBody).isNotNull();
+                assertThat(responseBody.getStatus()).isEqualTo(404);
+        }
 }
