@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ky.demo_park_api.entity.Usuario;
+import com.ky.demo_park_api.entity.Usuario.Role;
 import com.ky.demo_park_api.exception.EmailUniqueViolationException;
 import com.ky.demo_park_api.exception.EntityNotFoundException;
 import com.ky.demo_park_api.exception.PasswordInvalidException;
@@ -33,7 +34,15 @@ public class UserService {
     @Transactional(readOnly = true)
     public Usuario getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Usuario não encontrado.")));
+                .orElseThrow(()
+                        -> new EntityNotFoundException(String.format("Usuario não encontrado.")));
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario getUserEmail(String email) {
+        return userRepository.findUserByEmail(email).
+                orElseThrow(()
+                        -> new EntityNotFoundException(String.format("Usuario não encontrado.")));
     }
 
     @Transactional
@@ -63,6 +72,10 @@ public class UserService {
         Usuario user = getUserById(id);
         userRepository.deleteById(id);
         return user;
+    }
+
+    public Role getRoleWhereEmail(String email) {
+       return userRepository.findRoleByEmail();
     }
 
 }
