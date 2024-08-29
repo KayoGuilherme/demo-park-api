@@ -2,6 +2,7 @@ package com.ky.demo_park_api.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
@@ -26,6 +28,8 @@ public class UserService {
         if (userRepository.existsByEmail(usuario.getEmail())) {
             throw new EmailUniqueViolationException("Email já cadastrado: " + usuario.getEmail());
         }
+
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
         return userRepository.save(usuario);
 
@@ -48,17 +52,17 @@ public class UserService {
     @Transactional
     public Usuario updatePassword(Long id, String senhaAtual, String confirmaSenha, String novaSenha) {
 
-        if (!novaSenha.equals(confirmaSenha)) {
-            throw new PasswordInvalidException(String.format("Nova senha não confere com o confirmar senha"));
-        }
-
         Usuario user = getUserById(id);
 
         if (!user.getPassword().equals(senhaAtual)) {
             throw new PasswordInvalidException(String.format("Sua senha não confere."));
         }
 
-        user.setPassword(novaSenha);
+        if (!passwordEncoder.matches(senhaAtual, user.getPassword() )) {
+            throw new PasswordInvalidException(String.format("Nova senha não confere com o confirmar senha"));
+        }
+
+        user.setPassword(passwordEncoder.encode(novaSenha));
         return user;
     }
 
@@ -75,7 +79,7 @@ public class UserService {
     }
 
     public Role getRoleWhereEmail(String email) {
-       return userRepository.findRoleByEmail();
+        return userRepository.findRoleByEmail(email);
     }
 
 }

@@ -27,7 +27,7 @@ public class UsuarioIT {
     public void createUser_EmailAndPasswordAreValid_ReturnUserCreatedStatus201() {
         UserResponseDto responseBody = testClient
                 .post()
-                .uri("/users")
+                .uri("api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("oliver2clara@gmail.com", "12345678"))
                 .exchange()
@@ -43,7 +43,7 @@ public class UsuarioIT {
     public void createUser_InvalidPassword_ReturnErrorMessage422() {
         ErrorMessager responseBody = testClient
                 .post()
-                .uri("/users")
+                .uri("api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("oliver2clara@gmail.com", ""))
                 .exchange()
@@ -55,7 +55,7 @@ public class UsuarioIT {
 
         responseBody = testClient
                 .post()
-                .uri("/users")
+                .uri("api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("oliver2clara@gmail.com", "12345"))
                 .exchange()
@@ -71,7 +71,7 @@ public class UsuarioIT {
     public void createUser_InvalidEmail_ReturnErrorMessage422() {
         ErrorMessager responseBody = testClient
                 .post()
-                .uri("/users")
+                .uri("api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("", "12345678"))
                 .exchange()
@@ -83,7 +83,7 @@ public class UsuarioIT {
 
         responseBody = testClient
                 .post()
-                .uri("/users")
+                .uri("api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("kayo@", "12345678"))
                 .exchange()
@@ -95,7 +95,7 @@ public class UsuarioIT {
 
         responseBody = testClient
                 .post()
-                .uri("/users")
+                .uri("api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("kayo@gmail", "12345678"))
                 .exchange()
@@ -112,7 +112,7 @@ public class UsuarioIT {
 
         ErrorMessager responseBody = testClient
                 .post()
-                .uri("/users")
+                .uri("api/v1/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UserCreateDto("kayo@gmail.com", "12345678"))
                 .exchange()
@@ -127,7 +127,7 @@ public class UsuarioIT {
     public void updateUserPassword_PasswordIsValid_ReturnUserStatus204() {
         testClient
                 .patch()
-                .uri("/users/101")
+                .uri("api/v1/users/101")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("12345678", "123456789", "123456789"))
                 .exchange()
@@ -138,21 +138,47 @@ public class UsuarioIT {
     public void getUserById_WithExistingId_ReturnUserStatus200() {
         UserResponseDto responseBody = testClient
                 .get()
-                .uri("/users/101")
+                .uri("api/v1/users/102")
+                .headers(Authentication.getHeaderAuthorization(testClient, "kayo3@gmail.com", "12345678"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(UserResponseDto.class)
                 .returnResult().getResponseBody();
         assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getId()).isEqualTo(101);
-        assertThat(responseBody.getEmail()).isEqualTo("kayo@gmail.com");
+        assertThat(responseBody.getId()).isEqualTo(102);
+        assertThat(responseBody.getEmail()).isEqualTo("kayo3@gmail.com");
+
+        responseBody = testClient
+                .get()
+                .uri("api/v1/users/100")
+                .headers(Authentication.getHeaderAuthorization(testClient, "kayo3@gmail.com", "12345678"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UserResponseDto.class)
+                .returnResult().getResponseBody();
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getId()).isEqualTo(100);
+        assertThat(responseBody.getEmail()).isEqualTo("oliver_clara@gmail.com");
+
+        responseBody = testClient
+                .get()
+                .uri("api/v1/users/100")
+                .headers(Authentication.getHeaderAuthorization(testClient, "kayo3@gmail.com", "12345678"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UserResponseDto.class)
+                .returnResult().getResponseBody();
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getId()).isEqualTo(100);
+        assertThat(responseBody.getEmail()).isEqualTo("oliver_clara@gmail.com");
+
     }
 
     @Test
     public void getUserById_WithInexistingId_ReturnUserStatus404() {
         ErrorMessager responseBody = testClient
                 .get()
-                .uri("/users/8")
+                .uri("api/v1/users/8")
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody(ErrorMessager.class)
@@ -165,7 +191,7 @@ public class UsuarioIT {
     public void updateUserPassword_WithInexistingId_ReturnUserStatus404() {
         ErrorMessager responseBody = testClient
                 .patch()
-                .uri("/users/8")
+                .uri("api/v1/users/8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("12345678", "1234567", "123456789"))
                 .exchange()
@@ -181,7 +207,7 @@ public class UsuarioIT {
     public void updateUserPassword_WithInvalidFields_ReturnUserStatus422() {
         ErrorMessager responseBody = testClient
                 .patch()
-                .uri("/users/101")
+                .uri("api/v1/users/101")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("", "", ""))
                 .exchange()
@@ -193,7 +219,7 @@ public class UsuarioIT {
 
         responseBody = testClient
                 .patch()
-                .uri("/users/101")
+                .uri("api/v1/users/101")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("12345", "12345", "12345"))
                 .exchange()
@@ -208,7 +234,7 @@ public class UsuarioIT {
     public void updateUserPassword_WithInvalidPasswords_ReturnUserStatus400() {
         ErrorMessager responseBody = testClient
                 .patch()
-                .uri("/users/101")
+                .uri("api/v1/users/101")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("12345678", "123456", "1234567"))
                 .exchange()
@@ -220,7 +246,7 @@ public class UsuarioIT {
 
         responseBody = testClient
                 .patch()
-                .uri("/users/101")
+                .uri("api/v1/users/101")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("12345678", "123456789", "12345678"))
                 .exchange()
@@ -232,7 +258,7 @@ public class UsuarioIT {
 
         responseBody = testClient
                 .patch()
-                .uri("/users/101")
+                .uri("api/v1/users/101")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDto("12345678", "123456789", "12345678"))
                 .exchange()
@@ -247,7 +273,7 @@ public class UsuarioIT {
     public void getUsers_ReturnUserStatus200() {
         List<UserResponseDto> responseBody = testClient
                 .get()
-                .uri("/users")
+                .uri("api/v1/users")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(UserResponseDto.class)

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("users")
+@RequestMapping("api/v1/users")
 public class UserController {
 
     private final UserService userService;
@@ -38,18 +39,21 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<Usuario> users = userService.getUser();
         return ResponseEntity.ok(UserMapper.toListDto(users));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') OR (hasRole('CLIENTE') AND #id == authentication.principal.id)")
     public ResponseEntity<Usuario> getById(@PathVariable Long id) {
         Usuario user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')  AND #id == authentication.principal.id ")
     public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UsuarioSenhaDto data) {
         Usuario user = userService.updatePassword(id, data.getSenhaAtual(), data.getConfirmaSenha(),
                 data.getNovaSenha());

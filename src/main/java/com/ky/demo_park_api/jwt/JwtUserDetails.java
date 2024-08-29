@@ -1,10 +1,14 @@
 package com.ky.demo_park_api.jwt;
 
+
+
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 
 import com.ky.demo_park_api.entity.Usuario;
 
+
+// Pegar as informacoes do usuario pelo token ()<>()
 public class JwtUserDetails extends User {
 
     private Usuario usuario;

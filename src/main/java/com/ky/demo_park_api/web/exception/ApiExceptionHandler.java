@@ -1,5 +1,7 @@
 package com.ky.demo_park_api.web.exception;
 
+import java.nio.file.AccessDeniedException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +56,15 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessager(request, HttpStatus.UNPROCESSABLE_ENTITY, "Campo(s) inválidos", result));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorMessager> accessDeniedException(AccessDeniedException ex,
+            HttpServletRequest request, BindingResult result) {
+
+        log.error("Api Error", ex);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessager(request, HttpStatus.FORBIDDEN, ex.getMessage()));
     }
 }
