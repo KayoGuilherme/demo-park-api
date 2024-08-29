@@ -28,7 +28,7 @@ public class AuthController {
      authLogin(@RequestBody @Valid UserLoginDto data, HttpServletRequest request){ 
         log.info("processo de autenticacao pelo login", data.getEmail());
 
-        try {
+        try {       
             
         } catch (Exception e) {
         
