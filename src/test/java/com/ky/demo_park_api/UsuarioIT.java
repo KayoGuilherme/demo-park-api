@@ -179,6 +179,7 @@ public class UsuarioIT {
         ErrorMessager responseBody = testClient
                 .get()
                 .uri("api/v1/users/8")
+                .headers(Authentication.getHeaderAuthorization(testClient, "kayo3@gmail.com", "12345678"))
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody(ErrorMessager.class)

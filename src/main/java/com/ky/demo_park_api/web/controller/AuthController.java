@@ -29,7 +29,6 @@ public class AuthController {
     private final JwtUserDetailsService detailsService;
     private final AuthenticationManager authenticationManager;
 
-
     @PostMapping("/auth")
     public ResponseEntity<?>
             authLogin(@RequestBody @Valid UserLoginDto data, HttpServletRequest request) {
@@ -48,7 +47,5 @@ public class AuthController {
         }
         return ResponseEntity.badRequest().body(new ErrorMessager(request, HttpStatus.BAD_REQUEST, "Invalid Credentials"));
     }
-
-   
 
 }
