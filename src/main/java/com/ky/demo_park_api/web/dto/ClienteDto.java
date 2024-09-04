@@ -15,7 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ClienteCreateDto {
+public class ClienteDto {
 
     @NotNull
     @Size(min = 10, max = 125)

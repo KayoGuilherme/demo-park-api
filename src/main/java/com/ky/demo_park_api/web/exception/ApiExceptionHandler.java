@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ky.demo_park_api.exception.CodigoUniqueViolationException;
 import com.ky.demo_park_api.exception.EmailUniqueViolationException;
 import com.ky.demo_park_api.exception.EntityNotFoundException;
 import com.ky.demo_park_api.exception.PasswordInvalidException;
@@ -40,7 +41,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(EmailUniqueViolationException.class)
-    public ResponseEntity<ErrorMessager> handleEmailUniqueViolationException(EmailUniqueViolationException ex,
+    public ResponseEntity<ErrorMessager> handleEmailUniqueViolationException(EmailUniqueViolationException, CodigoUniqueViolationException ex,
             HttpServletRequest request) {
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
