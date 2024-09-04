@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ky.demo_park_api.entity.Vaga;
+import com.ky.demo_park_api.entity.Vaga.StatusVaga;
 import com.ky.demo_park_api.exception.CodigoUniqueViolationException;
 import com.ky.demo_park_api.repository.VagaRepository;
 
@@ -30,10 +31,14 @@ public class VagaService {
         }
     }
 
+
+
     @Transactional(readOnly = true)
     public List<Vaga> getWaves() {
         return vagaRepository.findAll();
     }
+
+
 
     @Transactional(readOnly = true)
     public Vaga getWaveByCodigo(String codigo) {
@@ -42,6 +47,20 @@ public class VagaService {
     }
 
 
-    
+   public Vaga updateWave(Long id, String codigo, String status) {
+    Vaga vaga = getWaveByCodigo(codigo);
+    vaga.setCodigo(codigo);
+    try {
+        StatusVaga statusVaga = StatusVaga.valueOf(status.toUpperCase());
+        vaga.setStatus(statusVaga);
+    } catch (IllegalArgumentException e) {
+
+        throw new IllegalArgumentException("valor de status invalido: " + status);
+    }
+    return vagaRepository.save(vaga);
+}
+
+
+
 
 }
