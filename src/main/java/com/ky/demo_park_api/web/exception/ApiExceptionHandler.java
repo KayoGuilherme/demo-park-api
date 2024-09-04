@@ -41,7 +41,16 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(EmailUniqueViolationException.class)
-    public ResponseEntity<ErrorMessager> handleEmailUniqueViolationException(EmailUniqueViolationException, CodigoUniqueViolationException ex,
+    public ResponseEntity<ErrorMessager> handleUniqueViolationException(EmailUniqueViolationException  ex,
+            HttpServletRequest request) {
+        log.error("Api Error", ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessager(request, HttpStatus.CONFLICT, ex.getMessage()));
+    }
+
+    @ExceptionHandler(CodigoUniqueViolationException.class)
+    public ResponseEntity<ErrorMessager> handleCodigoUniqueViolationException(CodigoUniqueViolationException  ex,
             HttpServletRequest request) {
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)

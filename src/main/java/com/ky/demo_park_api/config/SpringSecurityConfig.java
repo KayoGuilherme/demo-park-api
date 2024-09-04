@@ -23,6 +23,8 @@ import com.ky.demo_park_api.jwt.JwtAuthorizationFilter;
 @Configuration
 public class SpringSecurityConfig {
 
+  
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
@@ -30,22 +32,23 @@ public class SpringSecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "api/v1/users").permitAll()
-                .requestMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
-                .requestMatchers("/api/v1/cliente/**").hasAuthority("CLIENTE")
-                .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "api/v1/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
+                        .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).addFilterBefore(
                         jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class
-                ).exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
-                .build();
+                ).exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                ).build();
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

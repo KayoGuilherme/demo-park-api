@@ -4,15 +4,13 @@ import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import com.ky.demo_park_api.repository.VagaRepository;
-
-import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ky.demo_park_api.entity.Vaga;
 import com.ky.demo_park_api.exception.CodigoUniqueViolationException;
-import org.springframework.transaction.annotation.Transactional;
+import com.ky.demo_park_api.repository.VagaRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -38,10 +36,12 @@ public class VagaService {
     }
 
     @Transactional(readOnly = true)
-    public Vaga getWaveById(String codigo) {
-        
-                return vagaRepository.findByCodigo(codigo)
+    public Vaga getWaveByCodigo(String codigo) {
+     return vagaRepository.findByCodigo(codigo)
         .orElseThrow(() -> new EntityNotFoundException("Codigo de vaga nao encontrado"));
     }
+
+
+    
 
 }

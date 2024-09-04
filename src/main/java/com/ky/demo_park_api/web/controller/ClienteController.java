@@ -49,7 +49,6 @@ public class ClienteController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PageableDto> getAll(
             @PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
-    
         Page<ClienteProjection> clientes = clienteService.getCliente(pageable);
         return ResponseEntity.ok(PageableMapper.toDto(clientes));
     }

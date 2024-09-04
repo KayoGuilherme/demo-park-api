@@ -18,19 +18,16 @@ public class JwtUserDetailsService implements UserDetailsService {
         this.usuarioService = usuarioService;
     }
 
-    // Implementação do método da interface UserDetailsService para carregar detalhes do usuário com base no e-mail
+  
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Obtém o usuário com base no e-mail
         Usuario usuario = usuarioService.getUserEmail(email);
-        // Retorna uma instância de JwtUserDetails com as informações do usuário
         return new JwtUserDetails(usuario);
     }
 
-    // Método para obter um token JWT autenticado para um e-mail específico
+    
     public JwtToken getTokenAuthenticated(String email) {
         Usuario.Role role = usuarioService.getRoleWhereEmail(email);
-        // Cria um token JWT usando o e-mail e o papel do usuário
         return JwtUtils.createToken(email, role.name().substring("ROLE_".length()));
     }
 }

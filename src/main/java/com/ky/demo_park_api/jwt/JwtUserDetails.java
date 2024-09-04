@@ -9,6 +9,7 @@ import com.ky.demo_park_api.entity.Usuario;
 
 
 // Pegar as informacoes do usuario pelo token ()<>()
+
 public class JwtUserDetails extends User {
 
     private Usuario usuario;
