@@ -4,7 +4,7 @@ public interface ClienteProjection {
 
     Long getId();
 
-    String getNome_Cliente();
+    String getNome_cliente();
 
     String getCpf();
 

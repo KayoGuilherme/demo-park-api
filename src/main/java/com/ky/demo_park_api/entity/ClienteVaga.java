@@ -1,6 +1,6 @@
 package com.ky.demo_park_api.entity;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -16,7 +16,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,23 +25,53 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "clientes")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name = "clientes_tem_vaga")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-public class Cliente implements Serializable {
+@EntityListeners(AuditingEntityListener.class)
+public class ClienteVaga {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome_cliente", nullable = false, length = 100)
-    private String nome_cliente;
+    @Column(name = "numero_recibo", nullable = false, unique = true, length = 15)
+    private String recibo;
 
-    @Column(name = "cpf", nullable = false, length = 11)
-    private String cpf;
+    @Column(name = "placa", nullable = false, length = 8)
+    private String placa;
+
+    @Column(name = "marca", nullable = false, length = 45)
+    private String marca;
+
+    @Column(name = "modelo", nullable = false, length = 45)
+    private String modelo;
+
+    @Column(name = "cor", nullable = false, length = 45)
+    private String cor;
+
+    @Column(name = "Data_entrada", nullable = false)
+    private LocalDateTime dataEntrada;
+
+    @Column(name = "Data_saida", nullable = false)
+    private LocalDateTime dataSaida;
+
+    @Column(name = "valor", columnDefinition= "decimal(7,2)")
+    private BigDecimal valor;
+
+    @Column(name = "desconto", columnDefinition= "decimal(7,2)")
+    private BigDecimal desconto;
+
+    @ManyToOne
+    @JoinColumn(name = "id_cliente", nullable= false)
+    private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "id_vaga", nullable= false)
+    private Vaga vaga;
+
 
     @CreatedDate
     @Column(name = "createdAt")
@@ -58,23 +89,18 @@ public class Cliente implements Serializable {
     @Column(name = "modifiedBy")
     private String modifiedBy;
 
-    @OneToOne()
-    private Usuario usuario;
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cliente cliente = (Cliente) o;
-        return Objects.equals(id, cliente.id);
+        ClienteVaga clienteVaga = (ClienteVaga) o;
+        return Objects.equals(id, clienteVaga.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
     }
-
-  
 
 }

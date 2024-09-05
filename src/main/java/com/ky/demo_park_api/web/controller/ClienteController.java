@@ -1,6 +1,5 @@
 package com.ky.demo_park_api.web.controller;
 
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/clientes")
 public class ClienteController {
 
     private final ClienteService clienteService;
@@ -45,14 +44,13 @@ public class ClienteController {
         return ResponseEntity.ok(ClienteMapper.toDto(cliente));
     }
 
-    @GetMapping()
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageableDto> getAll(
-            @PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
+    public ResponseEntity<PageableDto> getAll(@PageableDefault(size = 5, sort = {"nome_cliente"}) Pageable pageable) {
         Page<ClienteProjection> clientes = clienteService.getCliente(pageable);
         return ResponseEntity.ok(PageableMapper.toDto(clientes));
     }
- 
+
     @GetMapping("/detalhes")
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<ClienteResponseDto> getClientDetails(@AuthenticationPrincipal JwtUserDetails userDetails) {
@@ -60,8 +58,8 @@ public class ClienteController {
         return ResponseEntity.ok(ClienteMapper.toDto(cliente));
     }
 
-    @PostMapping("cliente")
-    @PreAuthorize("hasrOLE('CLIENTE')")
+    @PostMapping
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<ClienteResponseDto> create(@RequestBody @Valid ClienteDto data, @AuthenticationPrincipal JwtUserDetails userDetails) {
         Cliente cliente = ClienteMapper.toCLiente(data);
         cliente.setUsuario(usuario.getUserById(userDetails.getId()));

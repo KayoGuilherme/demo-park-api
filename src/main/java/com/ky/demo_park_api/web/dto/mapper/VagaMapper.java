@@ -1,5 +1,6 @@
 package com.ky.demo_park_api.web.dto.mapper;
 
+
 import org.modelmapper.ModelMapper;
 
 import com.ky.demo_park_api.entity.Vaga;
@@ -12,12 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VagaMapper {
 
-    public static Vaga toDto(VagaDto dto) {
+    public static Vaga toVaga(VagaDto dto) {
         return new ModelMapper().map(dto, Vaga.class);
     }
 
-    public static VagaResponseDto toVagaDto(Vaga vaga) {
+    public static VagaResponseDto toDto(Vaga vaga) {
         return new ModelMapper().map(vaga, VagaResponseDto.class);
     }
-
 }

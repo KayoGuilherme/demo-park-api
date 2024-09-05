@@ -32,8 +32,6 @@ public class AuthController {
     @PostMapping("/auth")
     public ResponseEntity<?>
             authLogin(@RequestBody @Valid UserLoginDto data, HttpServletRequest request) {
-        log.info("processo de autenticacao pelo login", data.getEmail());
-
         try {
             UsernamePasswordAuthenticationToken authenticationToken
                     = new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword());
