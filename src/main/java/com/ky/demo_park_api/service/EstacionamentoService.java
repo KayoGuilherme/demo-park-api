@@ -1,5 +1,6 @@
 package com.ky.demo_park_api.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -20,10 +21,8 @@ public class EstacionamentoService {
     private final ClienteService clienteService;
     private final VagaService vagaService;
 
-
-
     @Transactional
-    public ClienteVaga  checkIn(ClienteVaga clienteVaga) {
+    public ClienteVaga checkIn(ClienteVaga clienteVaga) {
         Cliente cliente = clienteService.getClienteByCpf(clienteVaga.getCliente().getCpf());
         clienteVaga.setCliente(cliente);
 
@@ -32,13 +31,28 @@ public class EstacionamentoService {
         clienteVaga.setVaga(vaga);
 
         clienteVaga.setDataEntrada(LocalDateTime.now());
+        clienteVaga.setDataSaida(null);
 
         clienteVaga.setRecibo(EstacionamentoUtils.gerarRecibo());
-
         return clienteVagaService.save(clienteVaga);
-
-
     }
 
+    @Transactional
+    public ClienteVaga checkout(String recibo) {
+        ClienteVaga clienteVaga = clienteVagaService.getRecibo(recibo);
+        LocalDateTime dataSaida = LocalDateTime.now();
+
+        BigDecimal valor = EstacionamentoUtils.calcularCusto(clienteVaga.getDataEntrada(), dataSaida);
+        clienteVaga.setValor(valor);
+
+        long total = clienteVagaService.getTotalDeVezesEstacionamentoCompleto(clienteVaga.getCliente().getCpf());
+
+        BigDecimal desconto = EstacionamentoUtils.calcularDesconto(valor, total);
+        clienteVaga.setDesconto(desconto);
+        clienteVaga.setDataSaida(dataSaida);
+        clienteVaga.getVaga().setStatus(Vaga.StatusVaga.LIVRE);
+
+        return clienteVagaService.save(clienteVaga);
+    }
 
 }

@@ -3,10 +3,20 @@ package com.ky.demo_park_api.web.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import lombok.*;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ClienteVagaResponseDto {
-     private String placa;
+    private String placa;
     private String marca;
     private String modelo;
     private String cor;
