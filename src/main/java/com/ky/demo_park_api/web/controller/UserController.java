@@ -59,7 +59,7 @@ public class UserController {
                 data.getNovaSenha());
         return ResponseEntity.noContent().build();
     }
-
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Usuario user = userService.getUserById(id);

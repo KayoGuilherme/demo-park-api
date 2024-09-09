@@ -43,4 +43,9 @@ public class ClienteVagaService {
     }
     
 
+    public Page<ClienteVagaProjection> getAllByClienteId(Long id, Pageable pageable) {
+            return clienteVagaRepository.findAllClientesByUserId(id, pageable);
+    }
+    
+
 }

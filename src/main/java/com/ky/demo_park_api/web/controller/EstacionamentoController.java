@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ky.demo_park_api.entity.ClienteVaga;
+import com.ky.demo_park_api.jwt.JwtUserDetails;
 import com.ky.demo_park_api.repository.projection.ClienteVagaProjection;
 import com.ky.demo_park_api.service.ClienteVagaService;
 import com.ky.demo_park_api.service.EstacionamentoService;
@@ -69,11 +71,23 @@ public class EstacionamentoController {
     }
 
     @GetMapping("/cpf/{cpf}")
-    @PreAuthorize("hasRole('ADMIN')")   
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PageableDto> getAllEstacionamentosByCpf(@PathVariable String cpf,
             @PageableDefault(size = 5, sort = "dataEntrada", direction = Sort.Direction.ASC) Pageable pageable) {
-                
+
         Page<ClienteVagaProjection> projection = clienteVagaService.getAllByClienteCpf(cpf, pageable);
+
+        PageableDto dto = PageableMapper.toDto(projection);
+        return ResponseEntity.ok(dto);
+
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<PageableDto> getAllEstacionamentosDoCliente(@AuthenticationPrincipal JwtUserDetails user,
+            @PageableDefault(size = 5, sort = "dataEntrada", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        Page<ClienteVagaProjection> projection = clienteVagaService.getAllByClienteId(user.getId(), pageable);
 
         PageableDto dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
