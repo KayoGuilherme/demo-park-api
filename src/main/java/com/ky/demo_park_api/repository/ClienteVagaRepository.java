@@ -1,13 +1,12 @@
 package com.ky.demo_park_api.repository;
 
-import java.util.Optional;
-
+import com.ky.demo_park_api.entity.ClienteVaga;
+import com.ky.demo_park_api.repository.projection.ClienteVagaProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.ky.demo_park_api.entity.ClienteVaga;
-import com.ky.demo_park_api.repository.projection.ClienteVagaProjection;
+import java.util.Optional;
 
 public interface ClienteVagaRepository extends JpaRepository<ClienteVaga, Long> {
 
@@ -15,7 +14,8 @@ public interface ClienteVagaRepository extends JpaRepository<ClienteVaga, Long> 
 
     long countByClienteCpfAndDataSaidaIsNotNull(String cpf);
 
-    Page<ClienteVagaProjection> findAllClientesByCpf(String cpf, Pageable pageable );
-    Page<ClienteVagaProjection> findAllClientesByUserId(Long id, Pageable pageable );
-    
+    Page<ClienteVagaProjection> findAllByClienteCpf(String cpf, Pageable pageable);
+
+    Page<ClienteVagaProjection> findAllByClienteUsuarioId(Long id, Pageable pageable);
+
 }

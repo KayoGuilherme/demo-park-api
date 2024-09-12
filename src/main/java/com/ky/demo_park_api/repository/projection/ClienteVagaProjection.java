@@ -1,15 +1,15 @@
 package com.ky.demo_park_api.repository.projection;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public interface ClienteVagaProjection {
 
-  String getPlaca();
+    String getPlaca();
 
     String getMarca();
 

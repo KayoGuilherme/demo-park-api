@@ -1,17 +1,15 @@
 package com.ky.demo_park_api.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.ky.demo_park_api.entity.Cliente;
 import com.ky.demo_park_api.entity.ClienteVaga;
 import com.ky.demo_park_api.entity.Vaga;
 import com.ky.demo_park_api.utils.EstacionamentoUtils;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,6 @@ public class EstacionamentoService {
         clienteVaga.setVaga(vaga);
 
         clienteVaga.setDataEntrada(LocalDateTime.now());
-        clienteVaga.setDataSaida(null);
 
         clienteVaga.setRecibo(EstacionamentoUtils.gerarRecibo());
         return clienteVagaService.save(clienteVaga);

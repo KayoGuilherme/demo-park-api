@@ -1,7 +1,8 @@
 package com.ky.demo_park_api.web.exception;
 
-import java.nio.file.AccessDeniedException;
-
+import com.ky.demo_park_api.exception.*;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,13 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.ky.demo_park_api.exception.CodigoUniqueViolationException;
-import com.ky.demo_park_api.exception.EmailUniqueViolationException;
-import com.ky.demo_park_api.exception.EntityNotFoundException;
-import com.ky.demo_park_api.exception.PasswordInvalidException;
-
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import java.nio.file.AccessDeniedException;
 
 @Slf4j
 @RestControllerAdvice
@@ -24,7 +19,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(PasswordInvalidException.class)
     public ResponseEntity<ErrorMessager> handleMethodArgumentPasswordInvalidException(PasswordInvalidException ex,
-            HttpServletRequest request) {
+                                                                                      HttpServletRequest request) {
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -33,7 +28,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorMessager> handleMethodArgumentNotUserException(EntityNotFoundException ex,
-            HttpServletRequest request) {
+                                                                              HttpServletRequest request) {
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -41,17 +36,27 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(EmailUniqueViolationException.class)
-    public ResponseEntity<ErrorMessager> handleUniqueViolationException(EmailUniqueViolationException  ex,
-            HttpServletRequest request) {
+    public ResponseEntity<ErrorMessager> handleUniqueViolationException(EmailUniqueViolationException ex,
+                                                                        HttpServletRequest request) {
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessager(request, HttpStatus.CONFLICT, ex.getMessage()));
     }
 
+    @ExceptionHandler(CpfUniqueViolationException.class)
+    public ResponseEntity<ErrorMessager> handleClientExistViolationException(CpfUniqueViolationException ex,
+                                                                             HttpServletRequest request) {
+        log.error("Api Error", ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessager(request, HttpStatus.CONFLICT, ex.getMessage()));
+    }
+
+
     @ExceptionHandler(CodigoUniqueViolationException.class)
-    public ResponseEntity<ErrorMessager> handleCodigoUniqueViolationException(CodigoUniqueViolationException  ex,
-            HttpServletRequest request) {
+    public ResponseEntity<ErrorMessager> handleCodigoUniqueViolationException(CodigoUniqueViolationException ex,
+                                                                              HttpServletRequest request) {
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -60,7 +65,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessager> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex,
-            HttpServletRequest request, BindingResult result) {
+                                                                               HttpServletRequest request, BindingResult result) {
 
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -70,7 +75,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorMessager> accessDeniedException(AccessDeniedException ex,
-            HttpServletRequest request, BindingResult result) {
+                                                               HttpServletRequest request, BindingResult result) {
 
         log.error("Api Error", ex);
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
